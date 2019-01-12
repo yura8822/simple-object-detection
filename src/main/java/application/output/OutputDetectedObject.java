@@ -1,6 +1,7 @@
 package application.output;
 
 import application.convert.MatConvertToBufferedImage;
+import application.detection.DetectorObject;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
@@ -110,9 +111,12 @@ public class OutputDetectedObject {
                         if (frameObject == null){
                             frameObject = frameScene.submat(new Rect(cameraFrameWidth/2 - patternFrameWidth/2,
                                     cameraFrameHeight/2 - patternFrameHeight/2, patternFrameWidth, patternFrameHeight)).clone();
+                            DetectorObject.setFrameObject(frameObject);
                         }
 
-                        img = MatConvertToBufferedImage.MatToBufferedImage(frameObject);
+                        DetectorObject.run(frameScene);
+
+                        img = MatConvertToBufferedImage.MatToBufferedImage(frameScene);
                     }
 
 
