@@ -24,6 +24,7 @@ public class App {
         DetectorObject.setDescriptorMatcher(MatcherType.BRUTEFORCE_HAMMING);
         DetectorObject.setMatchSelectionFactor(3);
         DetectorObject.setRansacReprojThreshold(3);
+        DetectorObject.setColorBGR2GRAY(true);
 
         OutputDetectedObject.start();
     }

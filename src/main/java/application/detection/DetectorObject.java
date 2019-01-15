@@ -27,16 +27,19 @@ public class DetectorObject {
     private static DescriptorMatcher descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
     private static double matchSelectionFactor = 3;
     private static double ransacReprojThreshold = 3;
+    private static boolean colorBGR2GRAY = true;
 
     public static void run(Mat frameScene){
         if (frameObject == null)
             throw new RuntimeException("Set the value for frameObject (DetectorObject.setFrameObject())");
         if (descriptorsObject == null){
+            if (colorBGR2GRAY) Imgproc.cvtColor(frameObject, frameObject, Imgproc.COLOR_BGR2GRAY);
             keyPointsDetector.detect(frameObject, keyPointObject);
             descriptorsObject = new Mat();
             keyPointsDetector.compute(frameObject, keyPointObject, descriptorsObject);
         }
 
+        if (colorBGR2GRAY) Imgproc.cvtColor(frameScene, frameScene, Imgproc.COLOR_BGR2GRAY);
         keyPointsDetector.detect(frameScene, keyPointScene);
         keyPointsDetector.compute(frameScene, keyPointScene, descriptorScene);
         descriptorMatcher.match(descriptorsObject, descriptorScene, matOfDMatch);
@@ -149,5 +152,9 @@ public class DetectorObject {
 
     public static void setRansacReprojThreshold(double ransacReprojThreshold) {
         DetectorObject.ransacReprojThreshold = ransacReprojThreshold;
+    }
+
+    public static void setColorBGR2GRAY(boolean colorBGR2GRAY) {
+        DetectorObject.colorBGR2GRAY = colorBGR2GRAY;
     }
 }
