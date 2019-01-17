@@ -27,19 +27,47 @@ public class DetectorObject {
     private static DescriptorMatcher descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
     private static double matchSelectionFactor = 3;
     private static double ransacReprojThreshold = 3;
+    private static boolean drawSquare = true;
+    private static boolean drawLines = true;
     private static boolean colorBGR2GRAY = true;
+    //filters
+    private static boolean blur = false;
+    private static float filterCoreSizeBlur = 3;
+
+    private static boolean gaussianBlur = false;
+    private static float filterCoreSizeGaussianBlur = 3;
+
+    private static boolean medianBlur = false;
+    private static int filterCoreSizeMedianBlur = 3;
+
 
     public static void run(Mat frameScene){
         if (frameObject == null)
             throw new RuntimeException("Set the value for frameObject (DetectorObject.setFrameObject())");
         if (descriptorsObject == null){
             if (colorBGR2GRAY) Imgproc.cvtColor(frameObject, frameObject, Imgproc.COLOR_BGR2GRAY);
+
+            if (blur) Imgproc.blur(frameObject, frameObject, new Size(filterCoreSizeBlur, filterCoreSizeBlur));
+
+            if (gaussianBlur) Imgproc.GaussianBlur(frameObject, frameObject,
+                    new Size(filterCoreSizeGaussianBlur, filterCoreSizeGaussianBlur), 0);
+
+            if (medianBlur) Imgproc.medianBlur(frameObject, frameObject, filterCoreSizeMedianBlur);
+
             keyPointsDetector.detect(frameObject, keyPointObject);
             descriptorsObject = new Mat();
             keyPointsDetector.compute(frameObject, keyPointObject, descriptorsObject);
         }
 
         if (colorBGR2GRAY) Imgproc.cvtColor(frameScene, frameScene, Imgproc.COLOR_BGR2GRAY);
+
+        if (blur) Imgproc.blur(frameScene, frameScene, new Size(filterCoreSizeBlur, filterCoreSizeBlur));
+
+        if (gaussianBlur) Imgproc.GaussianBlur(frameScene, frameScene,
+                new Size(filterCoreSizeGaussianBlur, filterCoreSizeGaussianBlur), 0);
+
+        if (medianBlur) Imgproc.medianBlur(frameScene, frameScene, filterCoreSizeMedianBlur);
+
         keyPointsDetector.detect(frameScene, keyPointScene);
         keyPointsDetector.compute(frameScene, keyPointScene, descriptorScene);
         descriptorMatcher.match(descriptorsObject, descriptorScene, matOfDMatch);
@@ -92,7 +120,6 @@ public class DetectorObject {
         matOfPoint2fScene.fromList(listScene);
 
         homography = Calib3d.findHomography(matOfPoint2fObject, matOfPoint2fScene, Calib3d.RANSAC, ransacReprojThreshold);
-
     }
 
     private static void selectFoundObject(Mat frameScene){
@@ -107,15 +134,22 @@ public class DetectorObject {
         if (!homography.empty()) {
             Core.perspectiveTransform(cornersObject,cornersScene, homography);
 
-            Imgproc.rectangle(frameScene, new Point(cornersScene.get(0,0)),
-                    new Point(cornersScene.get(2,0)), Scalar.all(-1),4);
+            if (drawSquare) {
+                Imgproc.rectangle(frameScene, new Point(cornersScene.get(0,0)),
+                        new Point(cornersScene.get(2,0)), Scalar.all(-1),4);
+            }
+
+            if (drawLines) {
+                Imgproc.line(frameScene, new Point(cornersScene.get(0,0)),
+                        new Point(cornersScene.get(1,0)), Scalar.all(-1),4);
+                Imgproc.line(frameScene, new Point(cornersScene.get(1,0)),
+                        new Point(cornersScene.get(2,0)), Scalar.all(-1),4);
+                Imgproc.line(frameScene, new Point(cornersScene.get(2,0)),
+                        new Point(cornersScene.get(3,0)), Scalar.all(-1),4);
+                Imgproc.line(frameScene, new Point(cornersScene.get(3,0)),
+                        new Point(cornersScene.get(0,0)), Scalar.all(-1),4);
+            }
         }
-
-        Imgproc.line(frameScene, new Point(cornersScene.get(0,0)), new Point(cornersScene.get(1,0)), Scalar.all(-1),4);
-        Imgproc.line(frameScene, new Point(cornersScene.get(1,0)), new Point(cornersScene.get(2,0)), Scalar.all(-1),4);
-        Imgproc.line(frameScene, new Point(cornersScene.get(2,0)), new Point(cornersScene.get(3,0)), Scalar.all(-1),4);
-        Imgproc.line(frameScene, new Point(cornersScene.get(3,0)), new Point(cornersScene.get(0,0)), Scalar.all(-1),4);
-
     }
 
 
@@ -154,7 +188,30 @@ public class DetectorObject {
         DetectorObject.ransacReprojThreshold = ransacReprojThreshold;
     }
 
+    public static void setDrawSquare(boolean drawSquare) {
+        DetectorObject.drawSquare = drawSquare;
+    }
+
+    public static void setDrawLines(boolean drawLines) {
+        DetectorObject.drawLines = drawLines;
+    }
+
     public static void setColorBGR2GRAY(boolean colorBGR2GRAY) {
         DetectorObject.colorBGR2GRAY = colorBGR2GRAY;
+    }
+
+    public static void setfilterBlur(boolean blur, float filterCoreSizeBlur){
+        DetectorObject.blur = blur;
+        DetectorObject.filterCoreSizeBlur = filterCoreSizeBlur;
+    }
+
+    public static void setGaussianBlur(boolean gaussianBlur, float filterCoreSizeGaussianBlur){
+        DetectorObject.gaussianBlur = gaussianBlur;
+        DetectorObject.filterCoreSizeGaussianBlur = filterCoreSizeGaussianBlur;
+    }
+
+    public static void setMedianBlur(boolean medianBlur, int filterCoreSizeMedianBlur){
+        DetectorObject.medianBlur = medianBlur;
+        DetectorObject.filterCoreSizeMedianBlur = filterCoreSizeMedianBlur;
     }
 }
