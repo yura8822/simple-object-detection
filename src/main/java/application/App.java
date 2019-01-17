@@ -26,11 +26,13 @@ public class App {
         DetectorObject.setRansacReprojThreshold(3);
         DetectorObject.setDrawSquare(true);
         DetectorObject.setDrawLines(true);
-        DetectorObject.setColorBGR2GRAY(false);
+        DetectorObject.setColorBGR2GRAY(true);
 
         DetectorObject.setfilterBlur(false, 3);
         DetectorObject.setGaussianBlur(false, 3);
         DetectorObject.setMedianBlur(false, 3);
+        DetectorObject.setDilate(false, 3);
+        DetectorObject.setErode(false, 3);
 
         OutputDetectedObject.start();
     }

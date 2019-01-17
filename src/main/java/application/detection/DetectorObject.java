@@ -40,6 +40,13 @@ public class DetectorObject {
     private static boolean medianBlur = false;
     private static int filterCoreSizeMedianBlur = 3;
 
+    private static boolean dilate = false;
+    private static int filterCoreSizeDilate = 3;
+
+    private static boolean erode = false;
+    private static int filterCoreSizeErode = 3;
+
+
 
     public static void run(Mat frameScene){
         if (frameObject == null)
@@ -54,6 +61,12 @@ public class DetectorObject {
 
             if (medianBlur) Imgproc.medianBlur(frameObject, frameObject, filterCoreSizeMedianBlur);
 
+            if (dilate) Imgproc.dilate(frameObject, frameObject,
+                    Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(filterCoreSizeDilate, filterCoreSizeDilate)));
+
+            if (erode) Imgproc.erode(frameObject, frameObject,
+                    Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(filterCoreSizeErode, filterCoreSizeErode)));
+
             keyPointsDetector.detect(frameObject, keyPointObject);
             descriptorsObject = new Mat();
             keyPointsDetector.compute(frameObject, keyPointObject, descriptorsObject);
@@ -67,6 +80,12 @@ public class DetectorObject {
                 new Size(filterCoreSizeGaussianBlur, filterCoreSizeGaussianBlur), 0);
 
         if (medianBlur) Imgproc.medianBlur(frameScene, frameScene, filterCoreSizeMedianBlur);
+
+        if (dilate) Imgproc.dilate(frameScene, frameScene,
+                Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(filterCoreSizeDilate, filterCoreSizeDilate)));
+
+        if (erode) Imgproc.erode(frameScene, frameScene,
+                Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(filterCoreSizeErode, filterCoreSizeErode)));
 
         keyPointsDetector.detect(frameScene, keyPointScene);
         keyPointsDetector.compute(frameScene, keyPointScene, descriptorScene);
@@ -213,5 +232,15 @@ public class DetectorObject {
     public static void setMedianBlur(boolean medianBlur, int filterCoreSizeMedianBlur){
         DetectorObject.medianBlur = medianBlur;
         DetectorObject.filterCoreSizeMedianBlur = filterCoreSizeMedianBlur;
+    }
+
+    public static void setDilate(boolean dilate, int filterCoreSizeDilate){
+        DetectorObject.dilate = dilate;
+        DetectorObject.filterCoreSizeDilate = filterCoreSizeDilate;
+    }
+
+    public static void setErode(boolean erode, int filterCoreSizeErode){
+        DetectorObject.erode = erode;
+        DetectorObject.filterCoreSizeErode = filterCoreSizeErode;
     }
 }
