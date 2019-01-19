@@ -25,12 +25,12 @@ public class OutputDetectedObject {
 
     private static int videoCaptureIndex = 0;
 
-    private static int objectTemplateCreationTime = 8000;
+    private static int objectTemplateCreationTime = 4000;
 
-    private static int patternFrameWidth = 300;
-    private static int patternFrameHeight = 300;
+    private static int patternFrameWidth = 160;
+    private static int patternFrameHeight = 160;
 
-    private static int framesPerSecond = 20;
+    private static int framesPerSecond = 30;
 
 
     static {
@@ -161,7 +161,6 @@ public class OutputDetectedObject {
         if (cameraFrameWidth-cameraFrameWidth/4 > patternFrameWidth)
         OutputDetectedObject.patternFrameWidth = patternFrameWidth;
         else throw  new RuntimeException("You must set a value patternFrameWidth less than the current");
-
     }
 
     public static void setPatternFrameHeight(int patternFrameHeight) {

@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DetectorObject {
-    private static DetectorType detectorType;
 
     private static MatOfKeyPoint keyPointObject = new MatOfKeyPoint();
     private static MatOfKeyPoint keyPointScene = new MatOfKeyPoint();
@@ -91,6 +90,8 @@ public class DetectorObject {
         keyPointsDetector.compute(frameScene, keyPointScene, descriptorScene);
         descriptorMatcher.match(descriptorsObject, descriptorScene, matOfDMatch);
         findGoodMatch();
+        System.out.println("Key points in the object = "+keyPointObject.toList().size()
+                + " Key points in the scene = " + keyPointScene.toList().size()); //test
         if ((listMatchGoodSize >= 4) && (listMatchSize != listMatchGoodSize)) {
             findHomography();
             selectFoundObject(frameScene);
@@ -115,7 +116,7 @@ public class DetectorObject {
         }
         listMatchGoodSize = listGood.size();
         matOfDMatchGood.fromList(listGood);
-        System.out.println(listMatchSize + " " + listMatchGoodSize); // test
+        System.out.println("Matches = " +  listMatchSize + " Good matches = " + (listMatchSize - listMatchGoodSize)); // test
     }
 
     private static void findHomography(){
@@ -219,7 +220,7 @@ public class DetectorObject {
         DetectorObject.colorBGR2GRAY = colorBGR2GRAY;
     }
 
-    public static void setfilterBlur(boolean blur, float filterCoreSizeBlur){
+    public static void setFilterBlur(boolean blur, float filterCoreSizeBlur){
         DetectorObject.blur = blur;
         DetectorObject.filterCoreSizeBlur = filterCoreSizeBlur;
     }
