@@ -88,13 +88,16 @@ public class DetectorObject {
 
         keyPointsDetector.detect(frameScene, keyPointScene);
         keyPointsDetector.compute(frameScene, keyPointScene, descriptorScene);
-        descriptorMatcher.match(descriptorsObject, descriptorScene, matOfDMatch);
-        findGoodMatch();
-        System.out.println("Key points in the object = "+keyPointObject.toList().size()
-                + " Key points in the scene = " + keyPointScene.toList().size()); //test
-        if ((listMatchGoodSize >= 4) && (listMatchSize != listMatchGoodSize)) {
-            findHomography();
-            selectFoundObject(frameScene);
+
+        if (descriptorsObject.cols() == descriptorScene.cols()) {
+            descriptorMatcher.match(descriptorsObject, descriptorScene, matOfDMatch);
+            findGoodMatch();
+            System.out.println("Key points in the object = "+keyPointObject.toList().size()
+                    + " Key points in the scene = " + keyPointScene.toList().size()); //test
+            if ((listMatchGoodSize >= 4) && (listMatchSize != listMatchGoodSize)) {
+                findHomography();
+                selectFoundObject(frameScene);
+            }
         }
     }
 
